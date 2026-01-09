@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace WordSolitaire.ThirdParty.Ads.Data
+namespace Raccoons.Ads.Admob.Data
 {
     [CreateAssetMenu(fileName = "AdMobConfig", menuName = "Config/AdMob Config", order = 1)]
     public class AdMobConfig : ScriptableObject

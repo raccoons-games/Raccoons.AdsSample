@@ -1,7 +1,7 @@
 using System;
 using GoogleMobileAds.Ump.Api;
 
-namespace WordSolitaire.ThirdParty.Ads
+namespace Raccoons.Ads.Admob.Android
 {
     public static class Consent
     {

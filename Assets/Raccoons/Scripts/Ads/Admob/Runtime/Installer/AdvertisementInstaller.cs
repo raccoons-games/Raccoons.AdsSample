@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using Raccoons.Ads.Admob.Android;
+using UnityEngine;
 using Zenject;
 
-namespace WordSolitaire.ThirdParty.Ads
+namespace Raccoons.Ads.Admob.Installer
 {
     public class AdvertisementInstaller: MonoInstaller
     {

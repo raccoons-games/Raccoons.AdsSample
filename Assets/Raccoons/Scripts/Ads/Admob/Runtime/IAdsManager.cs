@@ -1,12 +1,12 @@
 using System;
 using GoogleMobileAds.Api;
+using Raccoons.Ads.Admob.AdTypes;
 
-namespace WordSolitaire.ThirdParty.Ads
+namespace Raccoons.Ads.Admob
 {
     public interface IAdsManager 
     {
         public bool ShownBanner { get; }
-
         public event Action OnRewardedVideoAvailableToShow;
         public event Action OnRewardedShown;
         public event Action OnRewardedClose;
@@ -14,9 +14,10 @@ namespace WordSolitaire.ThirdParty.Ads
         public void ShowBanner();
         public void HideBanner();
         public bool IsInterstitialAvailable();
-        public void ShowInterstitialAd(string placement = null, System.Action OnClose = null);
+        public void ShowInterstitialAd(string placement = null, Action OnClose = null);
         public bool IsRewardedVideoAvailable();
-        public void ShowRewarded(RewardedAdPlacement sourceId, System.Action OnFinish, System.Action onRewardedVideoNotAvailable = null, System.Action OnCanceled = null);
+        public void ShowRewarded(RewardedAdPlacement sourceId, Action OnFinish,
+            Action onRewardedVideoNotAvailable = null, Action OnCanceled = null);
         bool IsExtraRewardedAvailable();
         void ShowExtraRewardedAd(Action onFinish, Action onNotAvailable = null);
         void LoadExtraRewarded();

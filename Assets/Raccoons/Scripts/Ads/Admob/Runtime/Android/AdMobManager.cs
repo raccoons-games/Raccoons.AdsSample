@@ -3,10 +3,11 @@ using Cysharp.Threading.Tasks;
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Api.Mediation.UnityAds;
 using GoogleMobileAds.Ump.Api;
+using Raccoons.Ads.Admob.AdTypes;
+using Raccoons.Ads.Admob.Data;
 using UnityEngine;
-using WordSolitaire.ThirdParty.Ads.Data;
 
-namespace WordSolitaire.ThirdParty.Ads
+namespace Raccoons.Ads.Admob.Android
 {
     public class AdMobManager : MonoBehaviour, IAdsManager
     {

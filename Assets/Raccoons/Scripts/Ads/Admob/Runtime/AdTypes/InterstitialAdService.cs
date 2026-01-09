@@ -1,10 +1,10 @@
 using System;
 using Cysharp.Threading.Tasks;
 using GoogleMobileAds.Api;
+using Raccoons.Ads.Admob.Data;
 using UnityEngine;
-using WordSolitaire.ThirdParty.Ads.Data;
 
-namespace WordSolitaire.ThirdParty.Ads
+namespace Raccoons.Ads.Admob.AdTypes
 {
     public class InterstitialAdService : BaseAdService
     {

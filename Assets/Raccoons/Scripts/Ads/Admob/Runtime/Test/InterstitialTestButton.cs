@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace WordSolitaire.ThirdParty.Ads.Test
+namespace Raccoons.Ads.Admob.Test
 {
     [RequireComponent(typeof(Button))]
     public class InterstitialTestButton: MonoBehaviour

@@ -1,10 +1,11 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Raccoons.Ads.Admob.AdTypes;
 using UnityEngine;
 using Zenject;
 
-namespace WordSolitaire.ThirdParty.Ads
+namespace Raccoons.Ads.Admob
 {
     public class AdsProvider : IDisposable, IAdsProvider
     {
@@ -20,7 +21,6 @@ namespace WordSolitaire.ThirdParty.Ads
         public bool IsBannerDisplayed { get; set; } = false;
         public bool IsInit { get; private set; }
         public bool IsNoAds { get; private set; } 
-        
         public event Action OnAppProviderInit;
         public Action OnRewardedCompleted;
         public event Action OnRewardedLoaded;

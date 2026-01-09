@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Raccoons.Ads.Admob.AdTypes;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace WordSolitaire.ThirdParty.Ads.Test
+namespace Raccoons.Ads.Admob.Test
 {
     [RequireComponent(typeof(Button))]
     public class RewardTestButton: MonoBehaviour

@@ -1,13 +1,12 @@
 using System;
+using Raccoons.Ads.Admob.AdTypes;
 using Zenject;
 
-namespace WordSolitaire.ThirdParty.Ads
+namespace Raccoons.Ads.Admob
 {
     public interface IAdsProvider: IInitializable
     {
-
         public event Action OnRewardedLoaded;
-
         bool IsNoAds { get; }
         bool IsRewardedReady();
         bool IsInterstitialReady();

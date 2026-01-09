@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Raccoons.Ads.Admob.Data;
 using UnityEngine;
-using WordSolitaire.ThirdParty.Ads.Data;
 
-namespace WordSolitaire.ThirdParty.Ads
+namespace Raccoons.Ads.Admob.AdTypes
 {
     public abstract class BaseAdService
     {
