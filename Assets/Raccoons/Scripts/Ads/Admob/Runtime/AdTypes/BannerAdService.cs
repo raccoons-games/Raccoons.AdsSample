@@ -9,7 +9,6 @@ namespace Raccoons.Ads.Admob.AdTypes
     {
         private BannerView _bannerView;
         private bool _isShown;
-        private bool _isLoading;
 
         public event Action OnBannerLoaded;
         public event Action<LoadAdError> OnBannerLoadFailed;
@@ -26,7 +25,7 @@ namespace Raccoons.Ads.Admob.AdTypes
                 CreateBannerView();
             }
         
-            if (_isLoading)
+            if (IsLoading)
             {
                 Debug.Log("Banner ad is already loading, skipping...");
                 return;
@@ -34,7 +33,7 @@ namespace Raccoons.Ads.Admob.AdTypes
 
             var adRequest = new AdRequest();
             Debug.Log("Loading banner ad.");
-            _isLoading = true;
+            IsLoading = true;
             _bannerView.LoadAd(adRequest);
         
         }
@@ -58,9 +57,9 @@ namespace Raccoons.Ads.Admob.AdTypes
 
         public void Show()
         {
-            Debug.Log($"[BannerAdService] Show called. _bannerView != null: {_bannerView != null}, _isShown: {_isShown}, _isLoading: {_isLoading}");
+            Debug.Log($"[BannerAdService] Show called. _bannerView != null: {_bannerView != null}, _isShown: {_isShown}, _isLoading: {IsLoading}");
 
-            if (_isLoading)
+            if (IsLoading)
             {
                 Debug.Log("[BannerAdService] Skipping show, banner ad is loading");
                 return;       
@@ -111,14 +110,14 @@ namespace Raccoons.Ads.Admob.AdTypes
             _bannerView.OnBannerAdLoaded += () =>
             {
                 Debug.Log("Banner view loaded an ad with response : " + _bannerView.GetResponseInfo());
-                _isLoading = false;
+                MarkAsLoaded();
                 _isShown = true;
                 OnBannerLoaded?.Invoke();
             };
 
             _bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
             {
-                _isLoading = false;
+                MarkAsLoaded();
                 Debug.LogError("Banner view failed to load an ad with error : " + error.GetMessage());
                 OnBannerLoadFailed?.Invoke(error);
             };

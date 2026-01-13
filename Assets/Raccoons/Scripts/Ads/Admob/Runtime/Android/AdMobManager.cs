@@ -111,7 +111,7 @@ namespace Raccoons.Ads.Admob.Android
                 }
             
                 _interstitialService.Load();
-                _rewardedService.LoadRewardedAd();
+                _rewardedService.Load();
                 _rewardedService.LoadExtraRewardedAd();
 
                 int interDelay = config.DefaultInterSecondsDelay;
@@ -270,7 +270,7 @@ namespace Raccoons.Ads.Admob.Android
         }
         public void LoadRewarded()
         {
-            _rewardedService.LoadRewardedAd();   
+            _rewardedService.Load();   
         }
 
         #endregion REWARDED
