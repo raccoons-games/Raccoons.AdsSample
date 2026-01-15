@@ -22,6 +22,8 @@ namespace Raccoons.Ads.Admob.AdTypes
         private CancellationTokenSource _rewardedExpirationTokenSource;
         private CancellationTokenSource _extraRewardedExpirationTokenSource;
 
+        private bool IsHighRewardedLoading { get; set; } = false;
+
         public event Action OnRewardedVideoAvailableToShow;
         public event Action OnRewardedShown;
         public event Action OnRewardedClosed;
@@ -37,30 +39,39 @@ namespace Raccoons.Ads.Admob.AdTypes
             LoadRewardedAd();
         }
 
-        public void LoadRewardedAd()
+        private void LoadRewardedAd()
         {
+            Debug.Log("[RewardedAdService] LoadRewardedAd():Loading the rewarded ad.");
             if (IsRewardedAvailable())
             {
-                Debug.Log("LoadRewardedAd(): rewarded ad is already loaded and can be shown");
+                Debug.Log("[RewardedAdService] LoadRewardedAd(): rewarded ad is already loaded and can be shown");
                 return;
             }
 
-            Debug.Log("Loading the rewarded ad.");
+            if (!CanLoad())
+            {
+                Debug.Log("[RewardedAdService] LoadRewardedAd(): Can't start load reward, it's already loading");
+                return;
+            }
 
+            IsLoading = true;
             var adRequest = new AdRequest();
             RewardedAd.Load(config.RewardedAdUnitId, adRequest, OnRewardedLoadCallback);
         }
 
         public void LoadExtraRewardedAd()
         {
+            Debug.Log("[RewardedAdService] LoadExtraRewardedAd(): Loading the extra rewarded ad.");
             if (IsExtraRewardedAvailable())
             {
                 Debug.Log("LoadExtraRewardedAd(): extra rewarded ad is already loaded and can be shown");
                 return;
             }
+            
+            if(IsHighRewardedLoading)
+                Debug.Log("[RewardedAdService] LoadExtraRewardedAd(): Can't start load reward, it's already loading");
 
-            Debug.Log("Loading the extra rewarded ad.");
-
+            IsHighRewardedLoading = true;
             var request = new AdRequest();
             RewardedAd.Load(config.HighRewardAdUnitId, request, OnExtraRewardedLoadCallback);
         }
@@ -160,11 +171,11 @@ namespace Raccoons.Ads.Admob.AdTypes
             else if (IsExtraRewardedAvailable())
             {
                 rewardedAd = _extraRewardedAd;
-                Debug.Log("ShowRewardedAd(): extra reward video will be shown instead: no reward video available");
+                Debug.Log("[RewardedAdService] ShowRewardedAd(): extra reward video will be shown instead: no reward video available");
             }
             else
             {
-                Debug.Log("ShowRewardedAd(): reward is not ready");
+                Debug.Log("[RewardedAdService] ShowRewardedAd(): reward is not ready");
                 onNotAvailable?.Invoke();
                 LoadRewardedAd();
                 LoadExtraRewardedAd();
@@ -182,7 +193,7 @@ namespace Raccoons.Ads.Admob.AdTypes
             }
             else
             {
-                Debug.Log("Extra rewarded not ready");
+                Debug.Log("[RewardedAdService] Extra rewarded not ready");
                 onNotAvailable?.Invoke();
                 LoadExtraRewardedAd();
             }
@@ -201,7 +212,7 @@ namespace Raccoons.Ads.Admob.AdTypes
             ad.Show(reward =>
             {
                 OnRewardedShown?.Invoke();
-                Debug.Log($"Rewarded ad rewarded the user. Type: {reward.Type}, amount: {reward.Amount}.");
+                Debug.Log($"[RewardedAdService] Rewarded ad rewarded the user. Type: {reward.Type}, amount: {reward.Amount}.");
             });
         }
 
@@ -209,7 +220,7 @@ namespace Raccoons.Ads.Admob.AdTypes
         {
             if (error != null || ad == null)
             {
-                Debug.LogError("Rewarded ad failed to load an ad with error : " + error);
+                Debug.LogError("[RewardedAdService] Rewarded ad failed to load an ad with error : " + error);
                 DelayCall(LoadRewardedAd, config.RetryLoadDelay);
                 return;
             }
@@ -222,7 +233,7 @@ namespace Raccoons.Ads.Admob.AdTypes
         
             _rewardedAd = ad;
             MarkAsLoaded();
-            Debug.Log("Rewarded ad loaded with response : " + _rewardedAd.GetResponseInfo());
+            Debug.Log("[RewardedAdService] Rewarded ad loaded with response : " + _rewardedAd.GetResponseInfo());
         
             RegisterRewardedEventHandlers(_rewardedAd);
             RegisterRewardedReloadEventHandlers(_rewardedAd);
@@ -234,7 +245,7 @@ namespace Raccoons.Ads.Admob.AdTypes
         {
             if (error != null || ad == null)
             {
-                Debug.LogError($"Extra rewarded load failed: {error}");
+                Debug.LogError($"[RewardedAdService] Extra rewarded load failed: {error}");
                 DelayCall(LoadExtraRewardedAd, config.RetryLoadDelay).Forget();
                 return;
             }
@@ -246,7 +257,7 @@ namespace Raccoons.Ads.Admob.AdTypes
             }
 
             MarkExtraRewardAsLoaded(ad);
-            Debug.Log("Extra Rewarded ad loaded with response : " + _extraRewardedAd.GetResponseInfo());
+            Debug.Log("[RewardedAdService] Extra Rewarded ad loaded with response : " + _extraRewardedAd.GetResponseInfo());
         
             RegisterRewardedEventHandlers(_extraRewardedAd);
             RegisterExtraRewardedReloadEventHandlers(_extraRewardedAd);
@@ -258,6 +269,7 @@ namespace Raccoons.Ads.Admob.AdTypes
         {
             _extraRewardedAd = ad;
             _extraRewardedAdLoadTime = DateTime.Now;
+            IsHighRewardedLoading = false;
             StartExtraRewardedExpirationCheck();
         }
 
@@ -265,23 +277,23 @@ namespace Raccoons.Ads.Admob.AdTypes
         {
             ad.OnAdPaid += (AdValue adValue) =>
             {
-                Debug.Log(String.Format("Rewarded ad paid {0} {1}.", adValue.Value, adValue.CurrencyCode));
+                Debug.Log(String.Format("[RewardedAdService] Rewarded ad paid {0} {1}.", adValue.Value, adValue.CurrencyCode));
                 OnAdPaid?.Invoke(adValue);
             };
 
             ad.OnAdImpressionRecorded += () =>
             {
-                Debug.Log("Rewarded ad recorded an impression.");
+                Debug.Log("[RewardedAdService] Rewarded ad recorded an impression.");
             };
 
             ad.OnAdClicked += () =>
             {
-                Debug.Log("Rewarded ad was clicked.");
+                Debug.Log("[RewardedAdService] Rewarded ad was clicked.");
             };
 
             ad.OnAdFullScreenContentOpened += () =>
             {
-                Debug.Log("Rewarded ad full screen content opened.");
+                Debug.Log("[RewardedAdService] Rewarded ad full screen content opened.");
             };
         }
 
@@ -289,15 +301,15 @@ namespace Raccoons.Ads.Admob.AdTypes
         {
             ad.OnAdFullScreenContentClosed += async () =>
             {
-                Debug.Log("Rewarded Ad full screen content closed.");
                 await UniTask.WaitForEndOfFrame();
+                Debug.Log("[RewardedAdService] Rewarded Ad full screen content closed.");
                 OnRewardedClosed?.Invoke();
                 LoadRewardedAd();
             };
 
             ad.OnAdFullScreenContentFailed += (AdError error) =>
             {
-                Debug.LogError("Rewarded ad failed to open full screen content with error : " + error);
+                Debug.LogError("[RewardedAdService] Rewarded ad failed to open full screen content with error : " + error);
                 LoadRewardedAd();
             };
         }
@@ -306,15 +318,15 @@ namespace Raccoons.Ads.Admob.AdTypes
         {
             ad.OnAdFullScreenContentClosed += async () =>
             {
-                Debug.Log("Rewarded Ad full screen content closed.");
                 await UniTask.WaitForEndOfFrame();
+                Debug.Log("[RewardedAdService] Rewarded Ad full screen content closed.");
                 OnRewardedClosed?.Invoke();
                 LoadExtraRewardedAd();
             };
 
             ad.OnAdFullScreenContentFailed += (AdError error) =>
             {
-                Debug.LogError("Rewarded ad failed to open full screen content with error : " + error);
+                Debug.LogError("[RewardedAdService] Rewarded ad failed to open full screen content with error : " + error);
                 LoadExtraRewardedAd();
             };
         }

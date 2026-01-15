@@ -10,6 +10,8 @@ namespace Raccoons.Ads.Admob.AdTypes
     {
         protected readonly AdMobConfig config;
         protected DateTime lastLoadTime;
+        
+        public bool IsLoading { get; protected set; }
     
         private CancellationTokenSource _expirationCheckCancellationTokenSource;
 
@@ -28,6 +30,7 @@ namespace Raccoons.Ads.Admob.AdTypes
         protected void MarkAsLoaded()
         {
             lastLoadTime = DateTime.Now;
+            IsLoading = false;
             StartExpirationCheck();
         }
 
@@ -74,6 +77,11 @@ namespace Raccoons.Ads.Admob.AdTypes
         {
             await UniTask.WaitForSeconds(delay, true);
             call.Invoke();
+        }
+
+        protected virtual bool CanLoad()
+        {
+            return !IsLoading;
         }
     }
 }

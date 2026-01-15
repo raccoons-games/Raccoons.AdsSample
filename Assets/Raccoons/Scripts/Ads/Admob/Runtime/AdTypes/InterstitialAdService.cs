@@ -13,6 +13,7 @@ namespace Raccoons.Ads.Admob.AdTypes
         private DateTime _lastShowTime;
         private int _interSecondsDelay;
 
+        private bool IsHighInterstitialLoading { get; set; } = false;
         public event Action<InterstitialAd> OnInterstitialLoaded;
         public event Action<LoadAdError> OnInterstitialLoadFailed;
         public event Action OnInterstitialClosed;
@@ -36,8 +37,14 @@ namespace Raccoons.Ads.Admob.AdTypes
 
         private void LoadDefaultInterstitial()
         {
-            Debug.Log("Loading the default interstitial ad.");
-        
+            Debug.Log("[InterstitialAdService] Loading the default interstitial ad.");
+            if (!CanLoad())
+            {
+                Debug.Log("[InterstitialAdService] Can't load high interstitial ad, it's already loading!");
+                return;
+            }
+
+            IsLoading = true;
             var adRequest = new AdRequest();
             InterstitialAd.Load(config.InterstitialAdUnitId, adRequest, OnLoadCallback);
         }
@@ -46,12 +53,18 @@ namespace Raccoons.Ads.Admob.AdTypes
         {
             if (IsAvailable())
             {
-                Debug.Log("LoadHighInterstitialAd(): ad is already loaded and can be shown");
+                Debug.Log("[InterstitialAdService] LoadHighInterstitialAd(): ad is already loaded and can be shown");
                 return;
             }
 
-            Debug.Log("Loading the high interstitial ad.");
-        
+            if (IsHighInterstitialLoading)
+            {
+                Debug.Log("[InterstitialAdService] Can't load high interstitial ad, it's already loading!");
+                return;
+            }
+
+            Debug.Log("[InterstitialAdService] Loading the high interstitial ad.");
+            IsHighInterstitialLoading = true;
             var adRequest = new AdRequest();
             InterstitialAd.Load(config.HighInterstitialAdUnitId, adRequest, OnHighLoadCallback);
         }
@@ -165,7 +178,7 @@ namespace Raccoons.Ads.Admob.AdTypes
             }
 
             _highInterstitialAd = ad;
-            MarkAsLoaded();
+            IsHighInterstitialLoading = false;
             Debug.Log("HighInterstitial ad loaded with response : " + _highInterstitialAd.GetResponseInfo());
         
             RegisterHighInterstitialEventHandlers(_highInterstitialAd);
