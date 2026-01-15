@@ -245,9 +245,10 @@ namespace Raccoons.Ads.Admob.AdTypes
                 Debug.Log("Interstitial ad full screen content opened.");
             };
 
-            interstitialAd.OnAdFullScreenContentClosed += () =>
+            interstitialAd.OnAdFullScreenContentClosed += async () =>
             {
                 Debug.Log("Interstitial Ad full screen content closed.");
+                await UniTask.WaitForEndOfFrame();
                 OnInterstitialClosed?.Invoke();
                 Load();
             };
@@ -282,9 +283,10 @@ namespace Raccoons.Ads.Admob.AdTypes
                 Debug.Log("HighInterstitial ad full screen content opened.");
             };
 
-            interstitialAd.OnAdFullScreenContentClosed += () =>
+            interstitialAd.OnAdFullScreenContentClosed += async () =>
             {
                 Debug.Log("HighInterstitial Ad full screen content closed.");
+                await UniTask.WaitForEndOfFrame();
                 OnInterstitialClosed?.Invoke();
                 Load();
             };

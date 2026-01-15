@@ -299,8 +299,9 @@ namespace Raccoons.Ads.Admob.AdTypes
 
         private void RegisterRewardedReloadEventHandlers(RewardedAd ad)
         {
-            ad.OnAdFullScreenContentClosed += () =>
+            ad.OnAdFullScreenContentClosed += async () =>
             {
+                await UniTask.WaitForEndOfFrame();
                 Debug.Log("[RewardedAdService] Rewarded Ad full screen content closed.");
                 OnRewardedClosed?.Invoke();
                 LoadRewardedAd();
@@ -315,8 +316,9 @@ namespace Raccoons.Ads.Admob.AdTypes
 
         private void RegisterExtraRewardedReloadEventHandlers(RewardedAd ad)
         {
-            ad.OnAdFullScreenContentClosed += () =>
+            ad.OnAdFullScreenContentClosed += async () =>
             {
+                await UniTask.WaitForEndOfFrame();
                 Debug.Log("[RewardedAdService] Rewarded Ad full screen content closed.");
                 OnRewardedClosed?.Invoke();
                 LoadExtraRewardedAd();
